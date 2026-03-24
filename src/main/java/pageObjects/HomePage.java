@@ -11,8 +11,9 @@ import java.time.Duration;
 
 public class HomePage {
     private WebDriver driver;
-    private final By firstQuestion = By.id("accordion__heading-0");
-    private final By answerToFirstQuestion = By.id("accordion__panel-0");
+    private static final String HOME_PAGE_URL = "https://qa-scooter.praktikum-services.ru/"; // константа для URL
+
+    private final By questionsSection = By.xpath("//div[@class='Home_FAQ__3uVm4']");
 
     private final By topOrderButton = By.xpath("//div[@class='Header_Nav__AGCXC']//button[text()='Заказать']");
     private final By bottomOrderButton = By.xpath("//div[@class='Home_FinishButton__1_cWm']//button[text()='Заказать']");
@@ -21,24 +22,37 @@ public class HomePage {
     public HomePage(WebDriver driver) {
         this.driver = driver;
     }
-
     public void openHomePage() {
-        driver.get("https://qa-scooter.praktikum-services.ru/");
+        driver.get(HOME_PAGE_URL);
     }
+
     // методы для проверки секции вопросов
 
     public void scrollDowntoQuestions() {
-        WebElement questions = driver.findElement(firstQuestion);
+        WebElement questions = driver.findElement(questionsSection);
         ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", questions);
+        new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(ExpectedConditions.visibilityOf(questions));
     }
 
-    public void clickOnFirstQuestion() {
-        driver.findElement(firstQuestion).click();
+    private By question(int index) {
+        return By.id("accordion__heading-" + index);
     }
-    public String getFirstAnswerText() {
+
+    private By answer(int index) {
+        return By.id("accordion__panel-" + index);
+    }
+
+    public void clickOnQuestion(int index) {
+        driver.findElement(question(index)).click();
         new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(answerToFirstQuestion));
-        return driver.findElement(answerToFirstQuestion).getText();
+                .until(ExpectedConditions.visibilityOfElementLocated(question(index)));
+    }
+    public String getAnswerText(int index) {
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(answer(index)));
+        WebElement answerElement = driver.findElement(answer(index));
+            return answerElement.getText();
     }
 
     // методы для кнопок "Заказать"

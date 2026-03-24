@@ -49,21 +49,20 @@ public class OrderPage {
     public void setAddressField(String address) {
         driver.findElement(addressField).sendKeys(address);
     }
-    public void setMetroStationField(String station) {
+    public void setMetroStationField() { // Заменила на скролл и клик по станции
         driver.findElement(metroStationField).click();
-        driver.findElement(metroStationField).sendKeys(station);
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(stationOption));
+        WebElement station = driver.findElement(stationOption);
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", station);
         driver.findElement(stationOption).click(); // кликнуть на строку станции
     }
     public void setPhoneField(String phone) {
         driver.findElement(phoneField).sendKeys(phone);
     }
-    public void setPersonalInfo(String name, String lastname, String address, String station, String phone) {
+    public void setPersonalInfo(String name, String lastname, String address, String phone) {
         setNameField(name);
         setLastnameField(lastname);
         setAddressField(address);
-        setMetroStationField(station);
+        setMetroStationField();
         setPhoneField(phone);
         clickNextButton();
     }
